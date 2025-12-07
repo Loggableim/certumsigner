@@ -27,7 +27,7 @@ if %errorlevel% neq 0 (
 
 REM Build the executable
 echo Creating standalone executable...
-python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner src\certum_signer.py
 
 echo.
 if exist "dist\CertumSigner.exe" (

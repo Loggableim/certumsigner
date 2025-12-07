@@ -36,7 +36,7 @@ REM 3. Install PyInstaller
 python -m pip install pyinstaller
 
 REM 4. Build the executable
-python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner src\certum_signer.py
 
 REM 5. Your .exe is now in the dist\ folder
 ```
@@ -46,7 +46,7 @@ REM 5. Your .exe is now in the dist\ folder
 If you have Python installed, you can run the tool directly without building an .exe:
 
 ```batch
-python certum_signer.py
+python src\certum_signer.py
 ```
 
 This works exactly the same as the .exe version!

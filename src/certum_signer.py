@@ -9,6 +9,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 import os
 import subprocess
 import json
+import glob
 from datetime import datetime
 from pathlib import Path
 import threading
@@ -379,8 +380,6 @@ class CertumSignerApp:
         Returns:
             str: Path to signtool.exe or None if not found
         """
-        import glob
-        
         # Common Windows SDK locations
         sdk_paths = [
             r"C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe",
