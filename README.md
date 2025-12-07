@@ -47,9 +47,10 @@ python src/certum_signer.py
 
 Weitere Details:
 
-- `docs/usage.md`
-- `docs/troubleshooting.md`
-- `docs/faq.md`
+- `docs/QUICKSTART.md` - Schnelleinstieg
+- `docs/USAGE_EXAMPLES.md` - Verwendungsbeispiele
+- `docs/TROUBLESHOOTING.md` - Fehlerbehebung
+- `docs/PROJECT_SUMMARY.md` - Projekt-Übersicht
 
 ---
 

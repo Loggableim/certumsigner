@@ -28,9 +28,6 @@ jobs:
         run: |
           pip install pyinstaller
           python -m PyInstaller --onefile --windowed --name CertumSigner src/certum_signer.py
-          if (Test-Path "dist\certum_signer.exe") {
-            Copy-Item "dist\certum_signer.exe" "dist\CertumSigner.exe"
-          }
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
