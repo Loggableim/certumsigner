@@ -206,19 +206,22 @@ class CertumSignerApp:
         """Thread function to sign files"""
         success_count = 0
         failure_count = 0
+        verified_count = 0
         
         self.log_message(f"Starting signing process for {len(self.files_to_sign)} files...")
+        self.log_message("")
         
         for file_path in self.files_to_sign:
             try:
-                # Use Certum SimplySign command
-                # The actual command will depend on how SimplySign Desktop is configured
-                # Typically it would be something like:
-                # signtool sign /tr <timestamp_server> /td sha256 /fd sha256 /a <file>
-                
+                # Build and log the signing command
                 cmd = self._build_sign_command(file_path)
-                self.log_message(f"Signing: {os.path.basename(file_path)}")
+                self.log_message(f"=" * 80)
+                self.log_message(f"Processing: {file_path}")
+                self.log_message(f"Command: {' '.join(cmd)}")
+                self.log_message("")
                 
+                # Execute signing
+                self.log_message(f"Executing signtool...")
                 result = subprocess.run(
                     cmd,
                     capture_output=True,
@@ -226,33 +229,63 @@ class CertumSignerApp:
                     timeout=120  # 2 minute timeout per file
                 )
                 
+                # Log the complete output
+                self.log_message(f"Return code: {result.returncode}")
+                if result.stdout:
+                    self.log_message(f"Standard output:")
+                    for line in result.stdout.strip().split('\n'):
+                        self.log_message(f"  {line}")
+                if result.stderr:
+                    self.log_message(f"Standard error:")
+                    for line in result.stderr.strip().split('\n'):
+                        self.log_message(f"  {line}")
+                self.log_message("")
+                
+                # Check return code
                 if result.returncode == 0:
-                    success_count += 1
-                    self.log_message(f"✓ Successfully signed: {os.path.basename(file_path)}")
+                    self.log_message(f"Signtool reported success for: {os.path.basename(file_path)}")
+                    
+                    # Verify the signature
+                    self.log_message(f"Verifying signature...")
+                    is_verified, verify_msg = self._verify_signature(file_path)
+                    
+                    if is_verified:
+                        success_count += 1
+                        verified_count += 1
+                        self.log_message(f"✓ VERIFIED: File is properly signed: {os.path.basename(file_path)}")
+                    else:
+                        failure_count += 1
+                        self.log_message(f"✗ VERIFICATION FAILED: Signature not valid!", error=True)
+                        self.log_message(f"  Verification output: {verify_msg}", error=True)
+                        self.log_message(f"  WARNING: File may appear signed but signature is invalid!", error=True)
                 else:
                     failure_count += 1
-                    error_msg = result.stderr or result.stdout
-                    self.log_message(f"✗ Failed to sign: {os.path.basename(file_path)}", error=True)
-                    self.log_message(f"  Error: {error_msg}", error=True)
+                    self.log_message(f"✗ Signtool failed for: {os.path.basename(file_path)}", error=True)
+                    
+                self.log_message("")
                     
             except subprocess.TimeoutExpired:
                 failure_count += 1
                 self.log_message(f"✗ Timeout signing: {os.path.basename(file_path)}", error=True)
+                self.log_message("")
             except FileNotFoundError:
                 failure_count += 1
                 self.log_message(f"✗ Error signing {os.path.basename(file_path)}: signtool.exe not found", error=True)
                 self.log_message(f"  Please install Windows SDK or configure the full path in Settings", error=True)
                 self.log_message(f"  Current command: {self.settings.get('signing_command', 'signtool')}", error=True)
+                self.log_message("")
             except Exception as e:
                 failure_count += 1
                 self.log_message(f"✗ Error signing {os.path.basename(file_path)}: {e}", error=True)
+                self.log_message("")
         
         # Summary
-        self.log_message("")
+        self.log_message("=" * 80)
         self.log_message(f"=== Signing Complete ===")
-        self.log_message(f"Successful: {success_count}")
-        self.log_message(f"Failed: {failure_count}")
-        self.log_message(f"Total: {len(self.files_to_sign)}")
+        self.log_message(f"Total files processed: {len(self.files_to_sign)}")
+        self.log_message(f"Successfully signed and verified: {verified_count}")
+        self.log_message(f"Failed or unverified: {failure_count}")
+        self.log_message("=" * 80)
         
         # Re-enable button
         self.root.after(0, lambda: self.sign_button.config(state='normal'))
@@ -260,10 +293,66 @@ class CertumSignerApp:
         
         # Show completion message
         if failure_count == 0:
-            self.root.after(0, lambda: messagebox.showinfo("Success", f"All {success_count} files signed successfully!"))
+            self.root.after(0, lambda: messagebox.showinfo("Success", 
+                f"All {verified_count} files signed and verified successfully!"))
         else:
             self.root.after(0, lambda: messagebox.showwarning("Completed with Errors", 
-                f"Signed: {success_count}\nFailed: {failure_count}\nCheck log for details."))
+                f"Verified: {verified_count}\nFailed: {failure_count}\n\nCheck log for details."))
+    
+    def _verify_signature(self, file_path):
+        """Verify that a file is properly signed
+        
+        Returns:
+            tuple: (is_valid: bool, message: str)
+        """
+        try:
+            signing_tool = self.settings.get("signing_command", "signtool")
+            
+            # Build verify command
+            verify_cmd = [
+                signing_tool,
+                "verify",
+                "/pa",  # Verify using default authentication verification policy
+                "/v",   # Verbose output
+                file_path
+            ]
+            
+            self.log_message(f"Verify command: {' '.join(verify_cmd)}")
+            
+            # Execute verification
+            result = subprocess.run(
+                verify_cmd,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            # Log verification output
+            if result.stdout:
+                self.log_message(f"Verification output:")
+                for line in result.stdout.strip().split('\n'):
+                    self.log_message(f"  {line}")
+            if result.stderr:
+                self.log_message(f"Verification errors:")
+                for line in result.stderr.strip().split('\n'):
+                    self.log_message(f"  {line}")
+            
+            # Check if verification succeeded
+            if result.returncode == 0:
+                # Additional check: look for "Successfully verified" in output
+                if "Successfully verified" in result.stdout:
+                    return True, "Signature verified successfully"
+                else:
+                    return False, "Verification returned success but confirmation not found in output"
+            else:
+                return False, result.stdout + "\n" + result.stderr
+                
+        except subprocess.TimeoutExpired:
+            return False, "Verification timeout"
+        except FileNotFoundError:
+            return False, "signtool.exe not found for verification"
+        except Exception as e:
+            return False, f"Verification error: {str(e)}"
     
     def _build_sign_command(self, file_path):
         """Build the signing command"""
