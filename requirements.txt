@@ -7,3 +7,6 @@
 
 # For building standalone .exe
 pyinstaller>=6.0.0
+
+# For testing
+pytest>=7.0.0

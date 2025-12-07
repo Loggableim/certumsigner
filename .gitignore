@@ -1,12 +1,12 @@
 # Python
 __pycache__/
+*.pyc
 *.py[cod]
 *$py.class
 *.so
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -20,11 +20,13 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
-*.spec
+
+# Build output (keep dist/ folder but ignore build/)
+# dist/ folder is kept to store the pre-built CertumSigner.exe
 
 # PyInstaller
-*.manifest
 *.spec
+*.manifest
 
 # Virtual environment
 venv/
@@ -53,3 +55,4 @@ certum_signer_settings.json
 
 # Reference documentation
 *.pdf
+
