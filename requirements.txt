@@ -1,0 +1,9 @@
+# Requirements for Certum Signer
+# Basic version - no external dependencies needed for core functionality
+# Python 3.8+ with tkinter (included in standard Windows Python installation)
+
+# Optional: For native Windows drag-and-drop support
+# tkinterdnd2>=0.3.0
+
+# For building standalone .exe
+pyinstaller>=6.0.0
