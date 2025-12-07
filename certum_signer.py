@@ -308,12 +308,13 @@ class CertumSignerApp:
         try:
             signing_tool = self.settings.get("signing_command", "signtool")
             
-            # Build verify command
+            # Build verify command (using Certum's official verification parameters)
             verify_cmd = [
                 signing_tool,
                 "verify",
-                "/pa",  # Verify using default authentication verification policy
-                "/v",   # Verbose output
+                "/pa",   # Verify using default authentication verification policy
+                "/all",  # Verify all signatures (Certum official documentation)
+                "/v",    # Verbose output
                 file_path
             ]
             
@@ -355,7 +356,15 @@ class CertumSignerApp:
             return False, f"Verification error: {str(e)}"
     
     def _build_sign_command(self, file_path):
-        """Build the signing command"""
+        """Build the signing command
+        
+        Based on Certum's official documentation, there are two approaches:
+        1. Use /a to auto-select certificate (current implementation - works with SimplySign Desktop)
+        2. Use /sha1 <thumbprint> to specify exact certificate
+        
+        Current implementation uses /a which is simpler and works well with SimplySign Desktop.
+        Reference: CS-Code_Signing_in_the_Cloud_Signtool_jarsigner_signing.pdf
+        """
         # This builds the command for Certum SimplySign
         # Default command uses signtool which integrates with SimplySign Desktop
         

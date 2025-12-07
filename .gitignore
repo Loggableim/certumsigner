@@ -50,3 +50,6 @@ $RECYCLE.BIN/
 
 # Settings (user-specific)
 certum_signer_settings.json
+
+# Reference documentation
+*.pdf
