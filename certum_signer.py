@@ -407,12 +407,34 @@ class CertumSignerApp:
         
         Current implementation uses /a which is simpler and works well with SimplySign Desktop.
         Reference: CS-Code_Signing_in_the_Cloud_Signtool_jarsigner_signing.pdf
+        
+        IMPORTANT: You should use signtool.exe, NOT SimplySignDesktop.exe for signing.
+        signtool automatically integrates with SimplySign Desktop when you have it installed.
         """
         # This builds the command for Certum SimplySign
         # Default command uses signtool which integrates with SimplySign Desktop
         
         signing_tool = self.settings.get("signing_command", "signtool")
         timestamp_server = self.settings.get("timestamp_server", "http://time.certum.pl")
+        
+        # Warn if user configured SimplySignDesktop.exe directly
+        if "simplysign" in signing_tool.lower() and "simplysigndesktop.exe" in signing_tool.lower():
+            self.log_message("=" * 80, error=True)
+            self.log_message("⚠ WARNING: You configured SimplySignDesktop.exe as the signing tool!", error=True)
+            self.log_message("", error=True)
+            self.log_message("SimplySignDesktop.exe does NOT accept signtool command-line parameters!", error=True)
+            self.log_message("This will likely result in files NOT being signed.", error=True)
+            self.log_message("", error=True)
+            self.log_message("CORRECT CONFIGURATION:", error=True)
+            self.log_message("  Use 'signtool' or the full path to signtool.exe", error=True)
+            self.log_message("  signtool automatically integrates with SimplySign Desktop", error=True)
+            self.log_message("", error=True)
+            self.log_message("To fix:", error=True)
+            self.log_message("  1. Go to File → Settings", error=True)
+            self.log_message("  2. Change 'Signing Command' to: signtool", error=True)
+            self.log_message("  3. Or use full path: C:\\Program Files (x86)\\Windows Kits\\10\\bin\\...\\signtool.exe", error=True)
+            self.log_message("=" * 80, error=True)
+            self.log_message("")
         
         # Standard signtool command that works with SimplySign Desktop
         cmd = [
@@ -495,7 +517,10 @@ class CertumSignerApp:
         
         # Help text
         help_text = (
-            "Signing Command: Path to signtool.exe (leave as 'signtool' if it's in PATH)\n"
+            "Signing Command: Use 'signtool' (NOT SimplySignDesktop.exe!)\n"
+            "  • Leave as 'signtool' if it's in your PATH\n"
+            "  • Or provide full path to signtool.exe from Windows SDK\n"
+            "  • signtool integrates automatically with SimplySign Desktop\n\n"
             "Timestamp Server: URL of the timestamp server for timestamping signatures\n"
             "Log File: Location where signing logs will be saved"
         )
@@ -509,7 +534,24 @@ class CertumSignerApp:
         button_frame.grid(row=4, column=0, columnspan=3, pady=(20, 0))
         
         def save_and_close():
-            self.settings["signing_command"] = signing_cmd_entry.get()
+            signing_cmd = signing_cmd_entry.get()
+            
+            # Warn if user is trying to use SimplySignDesktop.exe
+            if "simplysigndesktop.exe" in signing_cmd.lower():
+                warning_msg = (
+                    "⚠ WARNING: You configured SimplySignDesktop.exe\n\n"
+                    "SimplySignDesktop.exe does NOT work with signtool command-line parameters!\n"
+                    "Your files will NOT be signed with this configuration.\n\n"
+                    "CORRECT CONFIGURATION:\n"
+                    "• Use 'signtool' (if in PATH)\n"
+                    "• Or full path to signtool.exe from Windows SDK\n\n"
+                    "signtool automatically integrates with SimplySign Desktop.\n\n"
+                    "Do you want to continue anyway?"
+                )
+                if not messagebox.askyesno("Configuration Warning", warning_msg, icon='warning'):
+                    return
+            
+            self.settings["signing_command"] = signing_cmd
             self.settings["timestamp_server"] = timestamp_entry.get()
             self.settings["log_file"] = log_file_entry.get()
             self.log_file = Path(self.settings["log_file"])
