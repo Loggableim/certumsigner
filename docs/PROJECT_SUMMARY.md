@@ -7,7 +7,7 @@ A complete Windows desktop tool for code signing with Certum SimplySign + Simply
 ## Files Included
 
 ### Main Application
-- **`certum_signer.py`** - Main Python application with GUI (400+ lines)
+- **`src/certum_signer.py`** - Main Python application with GUI (400+ lines)
   - Complete tkinter-based GUI
   - File selection and folder scanning
   - Batch signing functionality
@@ -71,7 +71,7 @@ A complete Windows desktop tool for code signing with Certum SimplySign + Simply
 - [x] Triggers signing command so SimplySign Desktop handles OTP
 
 ### Deliverables ✓
-- [x] Source code (certum_signer.py)
+- [x] Source code (src/certum_signer.py)
 - [x] Working Windows executable (via build scripts)
 - [x] Comprehensive documentation (3 markdown files)
 
@@ -86,12 +86,12 @@ A complete Windows desktop tool for code signing with Certum SimplySign + Simply
 ### Option 2: Manual
 ```batch
 pip install pyinstaller
-pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner src\certum_signer.py
 ```
 
 ### Option 3: Run Directly (No .exe needed)
 ```batch
-python certum_signer.py
+python src\certum_signer.py
 ```
 
 ## First Time Setup
@@ -149,15 +149,30 @@ python certum_signer.py
 
 ### File Structure
 ```
-certum_signer.py          # Main application
-SETUP.bat                 # Automated build
-build.bat                 # Manual build
-requirements.txt          # Python dependencies
-README.md                 # Main documentation
-QUICKSTART.md            # Quick start guide
-USAGE_EXAMPLES.md        # Usage examples
-.gitignore               # Git ignore rules
-LICENSE                  # GPL v3 license
+src/
+  certum_signer.py          # Main application
+  __init__.py               # Package init
+dist/
+  CertumSigner.exe          # Pre-built executable
+tests/
+  test_signer_basic.py      # Basic tests
+  __init__.py               # Test package init
+docs/
+  QUICKSTART.md             # Quick start guide
+  USAGE_EXAMPLES.md         # Usage examples
+  TROUBLESHOOTING.md        # Troubleshooting guide
+  PROJECT_SUMMARY.md        # This file
+.github/
+  workflows/
+    build.yml               # CI/CD pipeline
+SETUP.bat                   # Automated build
+build.bat                   # Manual build
+requirements.txt            # Python dependencies
+README.md                   # Main documentation
+CONTRIBUTING.md             # Contributing guide
+CHANGELOG.md                # Version history
+.gitignore                  # Git ignore rules
+LICENSE                     # GPL v3 license
 ```
 
 ### Settings Storage

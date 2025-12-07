@@ -11,7 +11,7 @@
 2. The SETUP.bat and build.bat scripts have been updated to use this syntax
 3. If you're building manually, use:
    ```batch
-   python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
+   python -m PyInstaller --onefile --windowed --name CertumSigner src\certum_signer.py
    ```
 4. Note: The pip package name is `pyinstaller` (lowercase), but the Python module is `PyInstaller` (capital P and I)
 
@@ -167,13 +167,13 @@
 
 **Solution 1** - Run from Python directly:
 ```batch
-python certum_signer.py
+python src\certum_signer.py
 ```
 This will show detailed error messages.
 
 **Solution 2** - Rebuild the executable:
 ```batch
-python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py --clean
+python -m pyinstaller --onefile --windowed --name CertumSigner src\certum_signer.py --clean
 ```
 
 **Solution 3** - Check Python version:
@@ -301,7 +301,7 @@ If something doesn't work, try these in order:
 - [ ] Run as Administrator
 - [ ] Temporarily disable antivirus
 - [ ] Rebuild the executable with `--clean` flag
-- [ ] Run from Python source: `python certum_signer.py`
+- [ ] Run from Python source: `python src\certum_signer.py`
 
 ## Still Having Issues?
 
