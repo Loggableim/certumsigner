@@ -173,7 +173,7 @@ This will show detailed error messages.
 
 **Solution 2** - Rebuild the executable:
 ```batch
-python -m pyinstaller --onefile --windowed --name CertumSigner src\certum_signer.py --clean
+python -m PyInstaller --onefile --windowed --name CertumSigner src\certum_signer.py --clean
 ```
 
 **Solution 3** - Check Python version:
@@ -321,7 +321,7 @@ If something doesn't work, try these in order:
 
 | Issue | Quick Fix |
 |-------|-----------|
-| pyinstaller not found | Use `python -m pyinstaller` instead |
+| pyinstaller not found | Use `python -m PyInstaller` instead |
 | signtool not found | Install Windows SDK or set full path in Settings |
 | No OTP prompt | Start SimplySign Desktop manually |
 | Build very slow | Be patient, first build takes 2-5 minutes |
