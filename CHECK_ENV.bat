@@ -73,7 +73,7 @@ if %ERROR_COUNT% equ 0 (
     echo You can now:
     echo   - Run SETUP.bat to build the .exe
     echo   - Run build.bat to build manually
-    echo   - Run: python certum_signer.py directly
+    echo   - Run: python src\certum_signer.py directly
 ) else (
     echo [ERROR] %ERROR_COUNT% required component(s) missing
     echo Please install the missing components and run this check again
