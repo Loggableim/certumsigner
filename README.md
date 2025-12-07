@@ -92,12 +92,14 @@ Access settings via **File → Settings**
 **Available Settings:**
 
 - **Signing Command**: Path to signing tool (default: `signtool`)
-  - **Option 1**: Use `signtool` (recommended)
+  - **✅ RECOMMENDED**: Use `signtool` (or full path to signtool.exe)
     - If signtool is in your PATH, leave as `signtool`
     - Otherwise, provide full path: `C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe`
-  - **Option 2**: Use SimplySign Desktop directly
-    - `C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe`
-    - Note: Verification still requires signtool.exe (auto-detected from Windows SDK)
+    - signtool automatically integrates with SimplySign Desktop
+  - **❌ NOT RECOMMENDED**: SimplySignDesktop.exe
+    - Does NOT accept signtool command-line parameters
+    - Will fail to sign files
+    - Only use signtool.exe!
 
 - **Timestamp Server**: URL for timestamping (default: `http://time.certum.pl`)
   - Certum's timestamp server: `http://time.certum.pl`
@@ -105,7 +107,11 @@ Access settings via **File → Settings**
 
 - **Log File Location**: Where signing logs are saved (default: `%USERPROFILE%\certum_signer.log`)
 
-**Important**: Signature verification always uses `signtool.exe` even if you configure `SimplySignDesktop.exe` for signing, because SimplySignDesktop.exe doesn't support the verify command. The tool will automatically search for signtool.exe in standard Windows SDK locations.
+**⚠️ IMPORTANT**: 
+- Always use **signtool.exe** for signing (NOT SimplySignDesktop.exe)
+- signtool automatically integrates with SimplySign Desktop when you have it installed
+- SimplySignDesktop.exe does not accept signtool command-line parameters
+- The tool will warn you if you try to configure SimplySignDesktop.exe
 
 ## How It Works
 
@@ -162,6 +168,36 @@ Default: `%USERPROFILE%\certum_signer.log`
 All signing operations are logged here with timestamps.
 
 ## Troubleshooting
+
+### Signing succeeds but verification shows "No signature found"
+
+**This is the most common issue!**
+
+**Cause**: You configured `SimplySignDesktop.exe` instead of `signtool.exe` in Settings.
+
+**Why this fails**:
+- `SimplySignDesktop.exe` does NOT accept signtool command-line parameters
+- The signing command runs without error (return code 0) but doesn't actually sign anything
+- Verification correctly detects that the file is NOT signed
+
+**Solution**:
+1. Go to **File → Settings**
+2. Change **Signing Command** from:
+   ```
+   C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe
+   ```
+   To:
+   ```
+   signtool
+   ```
+   Or the full path to signtool.exe:
+   ```
+   C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe
+   ```
+3. Click **Save**
+4. Try signing again
+
+**Important**: signtool.exe automatically integrates with SimplySign Desktop. You don't need to call SimplySignDesktop.exe directly!
 
 ### "signtool not found" or command fails
 
