@@ -10,7 +10,7 @@ A simple Windows desktop tool for code signing using **Certum SimplySign** and *
 ✅ **Progress Logging** - Real-time log output with success/failure status  
 ✅ **File Logging** - All operations logged to a text file  
 ✅ **Configurable Settings** - Customize signing command, timestamp server, and log location  
-✅ **Simple GUI** - Clean, Windows-style interface  
+✅ **Simple GUI** - Clean, Windows-style interface
 
 ## Requirements
 
@@ -73,10 +73,6 @@ The standalone .exe will be in the `dist` folder.
 - Click "Select Folder"
 - Choose a folder
 - All signable files in the folder (and subfolders) will be added
-
-**Method 3: Drag and Drop** (requires tkinterdnd2)
-- Drag files or folders directly onto the file list
-- Note: Basic version uses file selection dialogs
 
 ### Signing Files
 

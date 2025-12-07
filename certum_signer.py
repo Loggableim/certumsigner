@@ -33,9 +33,6 @@ class CertumSignerApp:
         self.create_menu()
         self.create_widgets()
         
-        # Enable drag and drop
-        self.setup_drag_drop()
-        
     def load_settings(self):
         """Load settings from JSON file"""
         default_settings = {
@@ -109,7 +106,7 @@ class CertumSignerApp:
         ttk.Button(button_frame, text="Clear List", command=self.clear_files).pack(side=tk.LEFT, padx=5)
         
         # File list frame
-        list_frame = ttk.LabelFrame(main_frame, text="Files to Sign (Drag & Drop files/folders here)", padding="5")
+        list_frame = ttk.LabelFrame(main_frame, text="Files to Sign", padding="5")
         list_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
@@ -140,13 +137,6 @@ class CertumSignerApp:
         
         self.log_text = scrolledtext.ScrolledText(log_frame, height=10, state='disabled')
         self.log_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-    
-    def setup_drag_drop(self):
-        """Setup drag and drop for files"""
-        # For full Windows drag-and-drop, tkinterdnd2 package is recommended
-        # For now, we provide file selection dialogs
-        # Users can install tkinterdnd2 for native drag-and-drop support
-        pass
     
     def select_files(self):
         """Open file dialog to select files"""
@@ -392,9 +382,9 @@ A simple Windows desktop tool for code signing using Certum SimplySign.
 
 Features:
 • Select files or folders for signing
-• Drag and drop support
 • Batch signing
-• Logging system
+• Real-time logging
+• File-based logs
 • Configurable settings
 
 The tool integrates with Certum SimplySign Desktop
