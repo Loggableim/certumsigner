@@ -17,7 +17,7 @@ if %errorlevel% neq 0 (
 
 REM Check if PyInstaller is installed, install if not
 echo Checking for PyInstaller...
-python -c "import pyinstaller" 2>nul
+python -c "import PyInstaller" 2>nul
 if %errorlevel% neq 0 (
     echo PyInstaller not found. Installing...
     python -m pip install --upgrade pip
@@ -27,7 +27,7 @@ if %errorlevel% neq 0 (
 
 REM Build the executable
 echo Creating standalone executable...
-python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
 
 echo.
 if exist "dist\CertumSigner.exe" (

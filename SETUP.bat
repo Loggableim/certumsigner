@@ -46,7 +46,7 @@ echo This may take 1-2 minutes...
 echo.
 
 REM Create the executable using Python module invocation
-python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
 
 echo.
 echo ========================================

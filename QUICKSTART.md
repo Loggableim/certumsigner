@@ -36,7 +36,7 @@ REM 3. Install PyInstaller
 python -m pip install pyinstaller
 
 REM 4. Build the executable
-python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
 
 REM 5. Your .exe is now in the dist\ folder
 ```

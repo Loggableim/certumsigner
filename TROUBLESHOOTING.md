@@ -2,17 +2,18 @@
 
 ## Build Issues
 
-### Issue: "pyinstaller is not recognized" or "Der Befehl 'pyinstaller' ist entweder falsch geschrieben..."
+### Issue: "pyinstaller is not recognized" or "No module named pyinstaller"
 
-**Cause**: PyInstaller is installed but not in your system PATH, or the wrong command syntax is being used.
+**Cause**: PyInstaller is installed but not in your system PATH, or the wrong command syntax/capitalization is being used.
 
 **Solution**:
-1. Use `python -m pyinstaller` instead of just `pyinstaller`
+1. Use `python -m PyInstaller` (capital P and I) instead of just `pyinstaller`
 2. The SETUP.bat and build.bat scripts have been updated to use this syntax
 3. If you're building manually, use:
    ```batch
-   python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+   python -m PyInstaller --onefile --windowed --name CertumSigner certum_signer.py
    ```
+4. Note: The pip package name is `pyinstaller` (lowercase), but the Python module is `PyInstaller` (capital P and I)
 
 ### Issue: Python not found
 
