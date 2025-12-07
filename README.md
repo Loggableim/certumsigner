@@ -55,7 +55,7 @@ A simple Windows desktop tool for code signing using **Certum SimplySign** and *
 
 ```bash
 pip install pyinstaller
-pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
 ```
 
 The standalone .exe will be in the `dist` folder.

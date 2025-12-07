@@ -238,6 +238,11 @@ class CertumSignerApp:
             except subprocess.TimeoutExpired:
                 failure_count += 1
                 self.log_message(f"✗ Timeout signing: {os.path.basename(file_path)}", error=True)
+            except FileNotFoundError:
+                failure_count += 1
+                self.log_message(f"✗ Error signing {os.path.basename(file_path)}: signtool.exe not found", error=True)
+                self.log_message(f"  Please install Windows SDK or configure the full path in Settings", error=True)
+                self.log_message(f"  Current command: {self.settings.get('signing_command', 'signtool')}", error=True)
             except Exception as e:
                 failure_count += 1
                 self.log_message(f"✗ Error signing {os.path.basename(file_path)}: {e}", error=True)

@@ -37,6 +37,7 @@ echo.
 
 REM Install PyInstaller
 echo Installing PyInstaller (this may take a moment)...
+python -m pip install --upgrade pip
 python -m pip install --upgrade pyinstaller
 
 echo.
@@ -44,8 +45,8 @@ echo Creating standalone executable...
 echo This may take 1-2 minutes...
 echo.
 
-REM Create the executable
-pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
+REM Create the executable using Python module invocation
+python -m pyinstaller --onefile --windowed --name CertumSigner certum_signer.py
 
 echo.
 echo ========================================
