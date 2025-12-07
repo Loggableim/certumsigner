@@ -91,15 +91,21 @@ Access settings via **File → Settings**
 
 **Available Settings:**
 
-- **Signing Command**: Path to signtool.exe (default: `signtool`)
-  - If signtool is in your PATH, leave as `signtool`
-  - Otherwise, provide full path: `C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe`
+- **Signing Command**: Path to signing tool (default: `signtool`)
+  - **Option 1**: Use `signtool` (recommended)
+    - If signtool is in your PATH, leave as `signtool`
+    - Otherwise, provide full path: `C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\signtool.exe`
+  - **Option 2**: Use SimplySign Desktop directly
+    - `C:\Program Files\Certum\SimplySign Desktop\SimplySignDesktop.exe`
+    - Note: Verification still requires signtool.exe (auto-detected from Windows SDK)
 
 - **Timestamp Server**: URL for timestamping (default: `http://time.certum.pl`)
   - Certum's timestamp server: `http://time.certum.pl`
   - Alternative: `http://timestamp.digicert.com`
 
 - **Log File Location**: Where signing logs are saved (default: `%USERPROFILE%\certum_signer.log`)
+
+**Important**: Signature verification always uses `signtool.exe` even if you configure `SimplySignDesktop.exe` for signing, because SimplySignDesktop.exe doesn't support the verify command. The tool will automatically search for signtool.exe in standard Windows SDK locations.
 
 ## How It Works
 
@@ -192,12 +198,21 @@ All signing operations are logged here with timestamps.
 **NEW**: The tool now automatically verifies signatures after signing.
 
 **Possible causes**:
+- Using SimplySignDesktop.exe for signing (verification requires signtool.exe)
 - Timestamp server failed (file signed but not timestamped)
 - Certificate chain issue
 - System time incorrect
 - Intermediate certificates missing
 
 **Solution**:
+
+**If using SimplySignDesktop.exe for signing**:
+1. This is normal - SimplySignDesktop.exe doesn't support verification
+2. The tool automatically searches for signtool.exe in Windows SDK locations
+3. Install Windows SDK if you don't have it: https://developer.microsoft.com/windows/downloads/windows-sdk/
+4. Alternative: Change signing command to use signtool.exe instead
+
+**For other verification failures**:
 1. Check the detailed log output for verification errors
 2. Look for timestamp-related errors in the log
 3. Try a different timestamp server in Settings
@@ -210,6 +225,7 @@ All signing operations are logged here with timestamps.
 - Check the "Verification output" section for specific errors
 - If it says "Successfully verified" - the file is properly signed
 - If verification timeout occurs, file may still be signed but check manually
+- If using SimplySignDesktop.exe, you'll see a note about needing signtool for verification
 
 ## Technical Details
 
