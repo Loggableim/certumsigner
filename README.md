@@ -7,6 +7,8 @@ A simple Windows desktop tool for code signing using **Certum SimplySign** and *
 ✅ **Select Files** - Choose individual files to sign  
 ✅ **Select Folder** - Add all signable files from a folder  
 ✅ **Batch Signing** - Sign multiple files at once  
+✅ **Automatic Verification** - Verifies each signature after signing  
+✅ **Detailed Logging** - Complete command output and verification results  
 ✅ **Progress Logging** - Real-time log output with success/failure status  
 ✅ **File Logging** - All operations logged to a text file  
 ✅ **Configurable Settings** - Customize signing command, timestamp server, and log location  
@@ -103,11 +105,28 @@ Access settings via **File → Settings**
 
 The tool integrates with **Certum SimplySign Desktop** using the standard Windows code signing workflow:
 
-1. The tool invokes `signtool.exe` with appropriate parameters
+1. The tool invokes `signtool.exe sign` with appropriate parameters
 2. signtool detects the SimplySign virtual smart card
 3. SimplySign Desktop prompts for OTP verification
 4. Upon successful OTP entry, the file is signed
 5. The signature is timestamped using the configured timestamp server
+6. **The tool automatically verifies the signature** using `signtool.exe verify`
+7. Verification results are logged with detailed output
+
+### Detailed Logging
+
+The tool logs:
+- Complete command being executed
+- All stdout and stderr from signtool
+- Return codes
+- Verification command and results
+- Warning if signing reports success but verification fails
+
+This helps identify issues like:
+- Files appearing signed but having invalid signatures
+- Timestamp server problems
+- Certificate issues
+- Authentication failures
 
 **The tool does NOT:**
 - Handle certificates directly
@@ -167,6 +186,30 @@ All signing operations are logged here with timestamps.
 - Check your Certum subscription is active
 - Ensure you have signing permissions for the certificate
 - Check internet connection (needed for timestamp server)
+
+### Signing reports success but verification fails
+
+**NEW**: The tool now automatically verifies signatures after signing.
+
+**Possible causes**:
+- Timestamp server failed (file signed but not timestamped)
+- Certificate chain issue
+- System time incorrect
+- Intermediate certificates missing
+
+**Solution**:
+1. Check the detailed log output for verification errors
+2. Look for timestamp-related errors in the log
+3. Try a different timestamp server in Settings
+4. Ensure system date/time is correct
+5. Check that certificate chain is complete in certificate store
+6. Re-run the signing for failed files
+
+**What to check in the log**:
+- Look for "VERIFICATION FAILED" messages
+- Check the "Verification output" section for specific errors
+- If it says "Successfully verified" - the file is properly signed
+- If verification timeout occurs, file may still be signed but check manually
 
 ## Technical Details
 
