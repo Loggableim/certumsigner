@@ -302,15 +302,33 @@ class CertumSignerApp:
     def _verify_signature(self, file_path):
         """Verify that a file is properly signed
         
+        Always uses signtool.exe for verification, regardless of the signing tool used.
+        SimplySignDesktop.exe doesn't support verification commands.
+        
         Returns:
             tuple: (is_valid: bool, message: str)
         """
         try:
+            # Always use signtool for verification, even if user configured a different signing tool
+            # SimplySignDesktop.exe doesn't support the verify command
             signing_tool = self.settings.get("signing_command", "signtool")
+            
+            # Check if user configured SimplySignDesktop or another non-signtool binary
+            if "simplysign" in signing_tool.lower():
+                # Try to find signtool.exe in common locations
+                signtool_path = self._find_signtool()
+                if not signtool_path:
+                    self.log_message("Note: Verification requires signtool.exe, but using SimplySignDesktop.exe for signing")
+                    self.log_message("Attempting to find signtool.exe in system...")
+                    # Try just 'signtool' - maybe it's in PATH
+                    signtool_path = "signtool"
+                verify_tool = signtool_path
+            else:
+                verify_tool = signing_tool
             
             # Build verify command (using Certum's official verification parameters)
             verify_cmd = [
-                signing_tool,
+                verify_tool,
                 "verify",
                 "/pa",   # Verify using default authentication verification policy
                 "/all",  # Verify all signatures (Certum official documentation)
@@ -351,9 +369,34 @@ class CertumSignerApp:
         except subprocess.TimeoutExpired:
             return False, "Verification timeout"
         except FileNotFoundError:
-            return False, "signtool.exe not found for verification"
+            return False, "signtool.exe not found for verification - install Windows SDK"
         except Exception as e:
             return False, f"Verification error: {str(e)}"
+    
+    def _find_signtool(self):
+        """Try to find signtool.exe in common Windows SDK locations
+        
+        Returns:
+            str: Path to signtool.exe or None if not found
+        """
+        import glob
+        
+        # Common Windows SDK locations
+        sdk_paths = [
+            r"C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe",
+            r"C:\Program Files (x86)\Windows Kits\10\bin\*\x86\signtool.exe",
+            r"C:\Program Files (x86)\Windows Kits\8.1\bin\x64\signtool.exe",
+            r"C:\Program Files (x86)\Windows Kits\8.1\bin\x86\signtool.exe",
+            r"C:\Program Files\Windows Kits\10\bin\*\x64\signtool.exe",
+        ]
+        
+        for pattern in sdk_paths:
+            matches = glob.glob(pattern)
+            if matches:
+                # Return the first match (usually the newest SDK version)
+                return matches[0]
+        
+        return None
     
     def _build_sign_command(self, file_path):
         """Build the signing command
